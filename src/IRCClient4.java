@@ -53,6 +53,7 @@ public class IRCClient4 {
 	// for testing purposes
 	static boolean trigger = false;
 	static final DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
 	public static void main(String[] args) throws IOException {
 		consoleFrame = makeConsole();
 		while (!trigger) {
@@ -72,9 +73,9 @@ public class IRCClient4 {
 			// reads input from server if server is ready
 			if (in.ready()) {
 				fromServer = in.readLine();
-				System.out.println(fromServer);
-				if(serverName.equals("4chan"))
-					serverName = fromServer.split(" ")[0].substring(fromServer.split(" ")[0].indexOf('.') + 1, fromServer.split(" ")[0].lastIndexOf('.'));
+				if (serverName.equals("4chan"))
+					serverName = fromServer.split(" ")[0].substring(fromServer.split(" ")[0].indexOf('.') + 1,
+							fromServer.split(" ")[0].lastIndexOf('.'));
 				try {
 					// TODO that thing V
 					loadToPanel(serverName, parseServerStuff(fromServer) + "\n");
@@ -135,22 +136,18 @@ public class IRCClient4 {
 			out.println("PONG :" + fromServer.split(":")[1] + "\n");
 			return "*pinges client*";
 		} else if (cmdz[1].equals("PRIVMSG")) {
-			String text = "";
-			for (int w = 3; w < cmdz.length; w++)
-				text += cmdz[w] + " ";
-			if (cmdz[2].indexOf("#") != 0) {
-				loadToPanel(cmdz[0].substring(1, cmdz[0].indexOf('!')), time + " | " + text.substring(1));
-				return "Message: " + text.substring(1) + " from " + cmdz[0];
+			System.out.println("fromServer: " + fromServer);
+			String text = fromServer.substring(fromServer.indexOf(':'));
+			if (cmdz[2].charAt(0) == '#') {
+				loadToPanel(cmdz[2], time + " | " + cmdz[0].substring(1, cmdz[0].indexOf('!')) + " : " + text);
 			} else {
-				loadToPanel(cmdz[2], time + " | " + cmdz[0].substring(1, cmdz[0].indexOf('!')) + " : " + text.substring(1));
+				loadToPanel(cmdz[0].substring(1, cmdz[0].indexOf('!')), time + " | " + text);
+				return "Message: " + text.substring(1) + " from " + cmdz[0];
 			}
 			System.out.println("?");
 			return "Message: " + text.substring(1) + " from " + cmdz[0] + " on the channel " + cmdz[2];
-		} else if(cmdz[1].equals("JOIN")){
-				
-		}
+		} else if (cmdz[1].equals("JOIN")) {}
 		return fromServer;
-		
 	}
 
 	public static void parseClientStuff(String fromClient) throws Exception {
@@ -162,9 +159,8 @@ public class IRCClient4 {
 			if (cmdz[0].substring(1).toLowerCase().equals("join")) {
 				loadToPanel(cmdz[1].toLowerCase(), "");
 			}
-
 		} else {
-			loadToPanel(tabPanel.getTitleAt(tabPanel.getSelectedIndex()), fromClient);
+			loadToPanel(nick + " | " + tabPanel.getTitleAt(tabPanel.getSelectedIndex()), fromClient);
 			out.println("PRIVMSG " + tabPanel.getTitleAt(tabPanel.getSelectedIndex()) + " :" + fromClient);
 		}
 	}
@@ -295,7 +291,7 @@ public class IRCClient4 {
 			}
 		});
 		output.setVisible(true);
-//		output.setText("There should be something here");
+		// output.setText("There should be something here");
 		// Dumps this into the tabs set
 		tabs.put(name, output);
 		// Wraps writing pane into a scroll pane
