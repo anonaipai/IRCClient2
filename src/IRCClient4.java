@@ -69,13 +69,14 @@ public class IRCClient4 {
 	public static void doStuff() throws IOException {
 		// instantiates stuff to store statements
 		String fromServer = "";
+		serverName = fromServer.split(" ")[0].substring(fromServer.split(" ")[0].indexOf('.') + 1,
+				fromServer.split(" ")[0].lastIndexOf('.'));
+		tabPanel.remove(0);
+		tabs.remove("4chan");
 		while (serverEnd.isConnected()) {
 			// reads input from server if server is ready
 			if (in.ready()) {
 				fromServer = in.readLine();
-				if (serverName.equals("4chan"))
-					serverName = fromServer.split(" ")[0].substring(fromServer.split(" ")[0].indexOf('.') + 1,
-							fromServer.split(" ")[0].lastIndexOf('.'));
 				try {
 					// TODO that thing V
 					loadToPanel(serverName, parseServerStuff(fromServer) + "\n");
@@ -146,7 +147,9 @@ public class IRCClient4 {
 			}
 			System.out.println("?");
 			return "Message: " + text.substring(1) + " from " + cmdz[0] + " on the channel " + cmdz[2];
-		} else if (cmdz[1].equals("JOIN")) {}
+		} else if (cmdz[1].equals("JOIN")) {
+			// TODO add to user list
+		}
 		return fromServer;
 	}
 
@@ -160,7 +163,7 @@ public class IRCClient4 {
 				loadToPanel(cmdz[1].toLowerCase(), "");
 			}
 		} else {
-			loadToPanel(nick + " | " + tabPanel.getTitleAt(tabPanel.getSelectedIndex()), fromClient);
+			loadToPanel(tabPanel.getTitleAt(tabPanel.getSelectedIndex()), nick + " | " + fromClient);
 			out.println("PRIVMSG " + tabPanel.getTitleAt(tabPanel.getSelectedIndex()) + " :" + fromClient);
 		}
 	}
